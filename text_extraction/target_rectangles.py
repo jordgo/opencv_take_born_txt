@@ -73,9 +73,11 @@ def _get_count_of_points_per_area(outer_rect: RectangleData,
 
     inner_cnt_sizes = []
     for rect, cnt in inner_rect_cnt:
-        ix, iy, iw, ih, _ = rect
-        if ix > x and iy > y and iw < w and ih < h and ix + iw < x + w and iy + ih < y + h:
+        if rect in outer_rect:
             inner_cnt_sizes.append(len(cnt))
+        # ix, iy, iw, ih, _ = rect
+        # if ix > x and iy > y and iw < w and ih < h and ix + iw < x + w and iy + ih < y + h:
+        #     inner_cnt_sizes.append(len(cnt))
 
     count_of_points_per_area = sum(inner_cnt_sizes) / (w * h)
     return int(count_of_points_per_area * 10000), len(inner_cnt_sizes)
@@ -103,13 +105,6 @@ def get_rect_by_contours(orig_img: np.ndarray, is_debug: bool = False) -> [Recta
 
     contours_origin, _ = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     contours_origin_external, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-    # cv2.drawContours(orig_img, contours_origin, -1, (0, 255, 0), 1)
-    # cv2.namedWindow('Test', cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow("Test", 1700, 900)
-    # cv2.imshow("Test", orig_img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
     contours_with_dilate, _ = cv2.findContours(dilate_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 

@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from models.data_classes import RectangleData
-from text_extraction.shapes_creation import get_rect_by_contours, _get_lines, _get_count_of_points_per_area
+from text_extraction.target_rectangles import get_rect_by_contours, _get_lines, _get_count_of_points_per_area
 
 
 @pytest.mark.parametrize("img_path, exp", [("imgs/4.png", [RectangleData(0, 1, 18, 22, '')]),
@@ -15,7 +15,7 @@ def test_get_rect_by_contours(img_path, exp):
 
 
 def test__get_lines():
-    img = cv2.imread("imgs/4.png")
+    img = cv2.imread("../../imgs/4.png")
     resp = _get_lines(img)
     assert np.array_equal(resp, img * 0)
 

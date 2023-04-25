@@ -2,12 +2,8 @@ import cv2
 import numpy as np
 import pytest
 
-from decors.prdecorators import print_time_of_script
-from models.data_classes import RectangleData
-from representers.html_representer import create_html
-from saving.save_to_dir import saving
-from text_extraction.by_contours import _get_tesseract_resp, _get_results_by_tesseract_configs, _get_text_by_max_conf, \
-    get_img_text_by_contours, _enlarge_image_canvas
+from text_extraction.by_contours import _get_results_by_tesseract_configs, _get_text_by_max_conf, \
+    _enlarge_image_canvas
 
 
 @pytest.mark.parametrize("img_path, exp", [#("imgs/symbol1.png", "->"),
@@ -33,7 +29,7 @@ def test__get_results_by_tesseract_configs(img_path, exp):
 
 
 def test__enlarge_image_canvas():
-    img = cv2.imread("imgs/4.png")
+    img = cv2.imread("../../imgs/4.png")
     print(img.shape)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     resp = _enlarge_image_canvas(gray)

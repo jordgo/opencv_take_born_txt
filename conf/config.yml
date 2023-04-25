@@ -1,0 +1,12 @@
+
+
+env:
+  THRESHOLD_OF_IMAGE_PRC: 5
+  THRESHOLD_OF_TXTBOXES_LENGTH: 0
+
+#============ DEBUG ===============
+debug_env:
+  START_AT: "00:13:02.920000"
+  END_AT: "00:13:03.920000"
+  # START_AT: "00:00:00.920000"
+  # END_AT: "00:00:01.920000"

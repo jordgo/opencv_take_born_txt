@@ -1,6 +1,7 @@
 import logging
 import subprocess
 from types import SimpleNamespace
+from typing import List
 
 import cv2
 import numpy as np
@@ -11,7 +12,7 @@ from models.data_classes import TesseractResp, RectangleData
 from representers.html_representer import create_html
 from representers.txt_representer import _get_lines_txt
 from saving.save_to_dir import saving, save_to_file
-from text_extraction.shapes_creation import get_rect_by_contours
+from text_extraction.target_rectangles import get_rect_by_contours
 
 _logger = logging.getLogger("app")
 
@@ -87,8 +88,8 @@ def _get_tesseract_resp(cropped: np.ndarray, resize_coeff: int, config) -> Tesse
     conf = 0
     sum_conf = 0
     count_of_words = 0
-    print(word["text"])  #TODO DEBUG ONLY
-    print(word["conf"])
+    # print(word["text"])  #TODO DEBUG ONLY
+    # print(word["conf"])
     for i in range(len(word["text"])):
         txt = word['text'][i]
         cnf = word["conf"][i]
@@ -99,7 +100,7 @@ def _get_tesseract_resp(cropped: np.ndarray, resize_coeff: int, config) -> Tesse
             text = text + txt + ' '
 
     text, conf = (text, conf) if conf > TESSERACT_QUALITY_MIN else ('', 0)
-    print('99999999999999999999999', text, conf, resize_coeff)
+    # print('99999999999999999999999', text, conf, resize_coeff)
     return TesseractResp(text=text, conf=conf, resize_coeff=resize_coeff, frame=thresh)
 
 
@@ -191,29 +192,30 @@ def _loop_through_rectangles(img: np.ndarray,
     return rectangles_txt
 
 
-
 @print_time_of_script
 def get_img_text_by_contours(orig_img: np.ndarray,
+                             rectangles: List[RectangleData],
                              from_box_debug: int = None,
                              to_box_debug: int = None,
                              save_cropped_img_path_debug: str = None,
-                             ) -> ([str], str):
+                             ) -> List[RectangleData]:
     """
     Gets arr[string] and html using tesseract
     :param orig_img:np.ndarray original image
+    :param rectangles: List[RectangleData] - rectangles without text
     :param from_box_debug: int - DEBUG ONLY
     :param to_box_debug: int - DEBUG ONLY
     :param save_cropped_img_path_debug: str - DEBUG ONLY - saving cropped img to ./tes/test_text_extraction/test_by_contours/imgs/result
-    :return: tuple(list[str], str) - list of text and HTML text
+    :return: List[RectangleData] - rectangles with text
     """
     tesseract_path = subprocess.run(['which', 'tesseract'], stdout=subprocess.PIPE) \
         .stdout.decode('utf-8').replace('\n', '')
     pytesseract.tesseract_cmd = tesseract_path
 
-    rectangles = get_rect_by_contours(orig_img)
+    # rectangles = get_rect_by_contours(orig_img)
     rectangles_with_txt = _loop_through_rectangles(orig_img, rectangles, from_box_debug, to_box_debug, save_cropped_img_path_debug)
 
-    text_arr = [o.text for o in rectangles_with_txt]
-    html_str = create_html(rectangles_with_txt)
+    # text_arr = [o.text for o in rectangles_with_txt]
+    # html_str = create_html(rectangles_with_txt)
 
-    return text_arr, html_str
+    return rectangles_with_txt

@@ -18,14 +18,14 @@ class ImageHandler:
         h_screen, w_screen, _ = self.original_image.shape
         all_rectangles: List[data_cls.RectangleData] = target_rectangles.get_rect_by_contours(self.original_image)
         page_type: page_templates.BasePageType = page_templates.get_page_type(w_screen, h_screen, all_rectangles)
-        header_rectangles: List[data_cls.RectangleData] = page_type.get_header_rectangles(all_rectangles)
+        # header_rectangles: List[data_cls.RectangleData] = page_type.get_header_rectangles(all_rectangles)
         body_left_side_rectangles: List[data_cls.RectangleData] = page_type.get_body_left_side_rectangles(all_rectangles)
-        header_rectangles_with_text: List[data_cls.RectangleData] = get_img_text_by_contours(self.original_image,
-                                                                                             header_rectangles,
-                                                                                             )
+        # header_rectangles_with_text: List[data_cls.RectangleData] = get_img_text_by_contours(self.original_image,
+        #                                                                                      header_rectangles,
+        #                                                                                      )
         body_left_side_rect_with_text: List[data_cls.RectangleData] = get_img_text_by_contours(self.original_image,
                                                                                                body_left_side_rectangles,
                                                                                                )
-        page_type.create_header_payload(header_rectangles_with_text)
+        # page_type.create_header_payload(header_rectangles_with_text)
         page_type.create_body_left_side_payload(body_left_side_rect_with_text)
         self.page_type = page_type

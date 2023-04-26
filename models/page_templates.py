@@ -21,8 +21,8 @@ class BasePageType:
         footer_h = int(self.footer_h_pct * h_screen)
         right_border_w  = int(self.right_border_w_pct * w_screen)
         left_border_w  = int(self.left_border_w_pct * w_screen)
-        self.header_section = PageSection(0, 0, w_screen, header_h)
-        self.footer_section = PageSection(0, h_screen - footer_h, w_screen, footer_h)
+        self.header_section = PageSection(left_border_w, 0, w_screen - left_border_w - right_border_w, header_h)
+        self.footer_section = PageSection(left_border_w, h_screen - footer_h, w_screen - left_border_w - right_border_w, footer_h)
         self.right_border_section = PageSection(0, 0, right_border_w, h_screen)
         self.left_border_section = PageSection(w_screen - left_border_w, 0, left_border_w, h_screen)
         self.body_section = PageSection(left_border_w,

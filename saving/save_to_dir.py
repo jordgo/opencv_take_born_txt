@@ -1,7 +1,12 @@
 import logging
 import os
+import shutil
 
 import cv2
+
+from typing import AnyStr
+
+import numpy as np
 
 _logger = logging.getLogger("app")
 
@@ -35,3 +40,14 @@ def saving(output_folder_filename, time_form, content, frame, is_html):
 
     file_name_img = folder_name + "/" + "image1.png"
     save_to_file(file_name_img, frame, True)
+
+
+def create_dir(folder_name: str) -> None:
+    try:
+        os.makedirs(folder_name)
+    except FileExistsError:
+        _logger.warning(f"Folder Exists. Removing.. , folder_name <{folder_name}>")
+        shutil.rmtree(folder_name, ignore_errors=True)
+        os.makedirs(folder_name)
+
+    _logger.info(f"Folder Created. folder_name <{folder_name}>")

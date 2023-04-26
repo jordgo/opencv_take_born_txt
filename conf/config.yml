@@ -1,8 +1,18 @@
 
 
 env:
+  PROJECT_PATH: '/home/george/PycharmProjects/open_cv_take_bone_txt'
   THRESHOLD_OF_IMAGE_PRC: 5
   THRESHOLD_OF_TXTBOXES_LENGTH: 0
+  THRESHOLD_OF_TXT_PRC: 5
+
+mongo:
+  host: 'localhost'
+  port: 27017
+  user: 'bone'
+  password: 'bonepwd'
+  db_name: 'bonedb'
+  collection_name: 'img_texts'
 
 #============ DEBUG ===============
 debug_env:

@@ -16,11 +16,8 @@ _logger = logging.getLogger("app")
 with open("./conf/config.yml", 'r') as file:
     config = yaml.safe_load(file)
 
-START_AT = "00:13:02.920000"
-# START_AT = "00:13:03.60000"
-END_AT = "00:14:03.920000"
-# START_AT = "00:00:00.920000"
-# END_AT = "00:00:01.920000"
+START_AT = config['debug_env']['START_AT'] #"00:13:02.920000"
+END_AT = config['debug_env']['END_AT'] #"00:19:03.920000"
 
 
 @click.command()

@@ -4,18 +4,19 @@ from types import SimpleNamespace
 from typing import List
 
 import cv2
+import easyocr
 import numpy as np
 from pytesseract import pytesseract
 
 from decors.prdecorators import print_time_of_script
+from definition import ROOT_DIR
 from models.data_classes import TesseractResp, RectangleData
-from representers.html_representer import create_html
-from representers.txt_representer import _get_lines_txt
-from saving.save_to_dir import saving, save_to_file
-from text_extraction.target_rectangles import get_rect_by_contours
+from saving import save_to_dir
+from saving.save_to_dir import saving
 
 _logger = logging.getLogger("app")
 
+EASY_OCR_CONF = 0.85
 CROPPED_RESIZE_COEFF = 10
 TESSERACT_QUALITY = 89
 TESSERACT_QUALITY_MIN = 80  # 70
@@ -133,6 +134,15 @@ def _get_results(config: str, cropped: np.ndarray) -> tuple:
     return results, count
 
 
+def _parse_with_easy_ocr(cropped: np.ndarray) -> tuple:
+    reader = easyocr.Reader(['en'])
+    result1 = reader.readtext(cropped, detail=1)
+    filtered_result1 = [t for t in result1 if t[2] > EASY_OCR_CONF]
+    concat_res = ' '.join([t[1] for t in filtered_result1])
+    resp = TesseractResp(concat_res, 90, 2, cropped)
+    return [resp], 1
+
+
 def _get_results_by_tesseract_configs(cropped: np.ndarray) -> tuple:
     """
     If the result is not found, changes the tesseract configuration
@@ -145,7 +155,11 @@ def _get_results_by_tesseract_configs(cropped: np.ndarray) -> tuple:
     if _get_text_by_max_conf(results).conf == 0:
         results, count2 = _get_results(TESSERACT_CONF_DIGITS, cropped)
 
-    count = count1 + count2
+    count3 = 0
+    if _get_text_by_max_conf(results).conf == 0:
+        results, count3 = _parse_with_easy_ocr(cropped)
+
+    count = count1 + count2 + count3
 
     # if get_text_by_max_conf(results)[1] == 0:
     #     results = get_results(TESSERACT_CONF_SYMBOLS)
@@ -165,7 +179,7 @@ def _loop_through_rectangles(img: np.ndarray,
     :param rectangles:list[RectangleData] - without text
     :param from_box_debug: int - DEBUG ONLY
     :param to_box_debug: int - DEBUG ONLY
-    :param save_cropped_img_path_debug: str - DEBUG ONLY - saving cropped img to ./tes/test_text_extraction/test_by_contours/imgs/result
+    :param save_cropped_img_path_debug: str - DEBUG ONLY - saving cropped img to ./test/test_text_extraction/test_by_contours/imgs/result
     :return:list[RectangleData] - with text
     """
     rectangles_txt = []
@@ -183,7 +197,7 @@ def _loop_through_rectangles(img: np.ndarray,
         #DEBUG
         if save_cropped_img_path_debug:
             # _logger.debug(f"11111111111111111111111 {text}, conf={conf}, count_of_pass={count_of_pass}")
-            saving(save_cropped_img_path_debug, f"{count}_{text}", text, frame, False)
+            saving(ROOT_DIR + '/tests/imgs/result', f"{count}_{text}", text, frame, False)
 
         if text != '':
             r.text = text

@@ -89,24 +89,17 @@ class TablePayload(PagePayload):
             if i + 1 < len_tmp_payload:
                 sum_spacing_btw_lines += lines_ordered[i + 1].y - lines_ordered[i].y
 
-        avg_spacing_btw_lines = sum_spacing_btw_lines / (len_tmp_payload - 1)
+        avg_spacing_btw_lines = sum_spacing_btw_lines if len_tmp_payload == 1 else sum_spacing_btw_lines / (len_tmp_payload - 1)
         return avg_spacing_btw_lines
 
     @staticmethod
     def _split_into_shapes(tmp_payload: Dict[data_cls.RectangleData, data_cls.RectangleData],
                            avg_spacing_btw_lines: float
                            ) -> List[List[dict]]:
-        # def _add_todict_as_dict(upd_dict: dict,
-        #                         key: data_cls.RectangleData,
-        #                         value: data_cls.RectangleData) -> Dict[dict, dict]:
-        #     k = dataclasses.asdict(key)
-        #     v = dataclasses.asdict(value)
-        #     upd_dict[k] = v
-        #     return upd_dict
-
         if tmp_payload:
             keys_ordered: List[data_cls.RectangleData] = sorted(tmp_payload, key=lambda obj:obj.y)
-            y_spacing_threshold = avg_spacing_btw_lines #+ avg_spacing_btw_lines * 0.3
+            y_spacing_threshold = avg_spacing_btw_lines + avg_spacing_btw_lines * 0.2
+            print(keys_ordered)
             shapes = []
             current_shape = []
             prev_y = 0

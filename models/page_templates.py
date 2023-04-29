@@ -89,7 +89,7 @@ class BodyWithLeftPayload(BasePageType):
                                                    self.body_section.h
                                                    )
 
-    def create_body_left_side_payload(self, rectangles: List[RectangleData]) -> Optional[page_payload.TablePayload]:
+    def create_body_left_side_payload(self, rectangles: List[RectangleData]) -> List[List[dict]]:
         body_left_side_payload = page_payload.TablePayload(self.body_left_side_section, rectangles)
         self.body_left_side_payload = body_left_side_payload
         return body_left_side_payload.payload
@@ -107,10 +107,12 @@ class BodyWithoutPayload(BasePageType):
         self.set_base_sections(w_screen, h_screen)
 
 
-def get_page_type(w_screen: int, h_screen: int, boxes: [RectangleData]) -> BasePageType:
+def get_page_type(w_screen: int, h_screen: int, boxes: [RectangleData], config) -> BasePageType:
+    MIN_NUMBER_OF_DATA_TABLE_LINES: int = config['env']['MIN_NUMBER_OF_DATA_TABLE_LINES']
     maybe_with_left_payload = BodyWithLeftPayload(w_screen, h_screen)
     left_side_rectangles = maybe_with_left_payload.create_body_left_side_payload(boxes)
-    if left_side_rectangles:
+    flat_list = [item for sublist in left_side_rectangles for item in sublist] if left_side_rectangles else []
+    if left_side_rectangles and len(flat_list) > MIN_NUMBER_OF_DATA_TABLE_LINES:
         return maybe_with_left_payload
     else:
         return BodyWithoutPayload(w_screen, h_screen)

@@ -10,7 +10,7 @@ THRESHOLD_CONTOURS_POINTS = 1000
 
 def _get_lines(gray: np.ndarray) -> np.ndarray:
     """getting the lines of a drawing for later deletion"""
-    blur_gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    blur_gray = cv2.GaussianBlur(gray, (7, 7), 0)
     # io.imagesc(blur_gray)
     edges = cv2.Canny((blur_gray * 255).astype(np.uint8), 10, 200, apertureSize=5)
     rho = 1  # distance resolution in pixels of the Hough grid
@@ -122,5 +122,11 @@ def get_rect_by_contours(orig_img: np.ndarray, is_debug: bool = False) -> [Recta
             rect_possibly_contains_text.append((box, (count_of_points_per_area, count_boxes)))  # DEBUG ONLY
         else:
             rect_possibly_contains_text.append(box)
+
+    # cv2.namedWindow('Test', cv2.WINDOW_NORMAL)
+    # cv2.resizeWindow("Test", 1700, 900)
+    # cv2.imshow("Test", thresh)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     return rect_possibly_contains_text
